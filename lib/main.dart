@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:merchant_app/app_bloc/order_bloc.dart';
+import 'package:merchant_app/screens/home/home_screen.dart';
 import 'package:merchant_app/screens/login_page.dart';
 import 'package:merchant_app/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
@@ -21,10 +22,33 @@ void setupLocator() {
   GetIt.I.registerLazySingleton(() => UserBloc());
 }
 
+Map<String, PageRoute<dynamic> Function(Object)> routes = {
+  Routes.root: (Object params) => MaterialPageRoute(
+        settings: RouteSettings(name: Routes.root),
+        builder: (context) => SplashScreen(),
+      ),
+  Routes.home: (Object params) => MaterialPageRoute(
+        settings: RouteSettings(name: Routes.home),
+        builder: (context) => HomeScreen(),
+      ),
+  Routes.logout: (Object params) => MaterialPageRoute(
+        settings: RouteSettings(name: Routes.logout),
+        builder: (context) => HomeScreen(),
+      ),
+};
+
+class Routes {
+  Routes._();
+
+  static const root = '/';
+  static const home = '/home';
+  static const logout = '/logout';
+}
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
-      runApp(MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -47,19 +71,19 @@ class MyApp extends StatelessWidget {
               client: graphQLConfiguration.client,
               child: CacheProvider(
                 child: MaterialApp(
-                    title: 'Merchant App',
-                    theme: ThemeData(
-                      scaffoldBackgroundColor: Color.fromRGBO(143, 148, 251, 1),
-                      appBarTheme: AppBarTheme(
-                          color: Color.fromRGBO(143, 148, 251, 1),
-                          elevation: 0),
-                      visualDensity: VisualDensity.adaptivePlatformDensity,
-                    ),
-                    home: SplashScreen(),
-                    routes: {
-                      "/logout": (_) => new LoginPage(),
-                      // "/HomeScreen": (_) => new HomeScreen()
-                    }),
+                  title: 'Merchant App',
+                  theme: ThemeData(
+                    scaffoldBackgroundColor: Color.fromRGBO(143, 148, 251, 1),
+                    appBarTheme: AppBarTheme(
+                        color: Color.fromRGBO(143, 148, 251, 1), elevation: 0),
+                    visualDensity: VisualDensity.adaptivePlatformDensity,
+                  ),
+                  // navigatorKey: GETIT.navigatorKey,
+                  initialRoute: Routes.root,
+                  onGenerateRoute: (settings) {
+                    return routes[settings.name](settings.arguments);
+                  },
+                ),
               ),
             ),
           );

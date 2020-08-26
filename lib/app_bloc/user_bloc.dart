@@ -35,6 +35,9 @@ class UserBloc with ChangeNotifier {
     notifyListeners();
   }
 
+  // ToDo: send to device
+  String fcmToken;
+
   String _jwt;
   String get jwt => _jwt;
   setJwt(String jwt) async {
@@ -51,7 +54,8 @@ class UserBloc with ChangeNotifier {
     if (preferences == null) {
       preferences = await SharedPreferences.getInstance();
     }
-    if (jwt == null) {//debug preferences is null after reset
+    if (jwt == null) {
+      //debug preferences is null after reset
       await preferences?.remove("jwt");
 
       // await appBloc.storage.delete(key: 'jwt');
