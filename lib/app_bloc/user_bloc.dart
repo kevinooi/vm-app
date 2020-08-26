@@ -12,7 +12,6 @@ class UserBloc with ChangeNotifier {
 
   UserBloc() {
     init();
-    setJwt(jwt);
     print('init');
   }
   SharedPreferences preferences;
@@ -49,10 +48,20 @@ class UserBloc with ChangeNotifier {
 
     Link _link;
 
-    if (jwt == null) {
+    if (preferences == null) {
+      preferences = await SharedPreferences.getInstance();
+    }
+    if (jwt == null) {//debug preferences is null after reset
+      await preferences?.remove("jwt");
+
       // await appBloc.storage.delete(key: 'jwt');
       _link = HttpLink(uri: "${GraphQLConfiguration.baseURL}/graphql");
     } else {
+      var status = await preferences.setString('jwt', jwt);
+      if (status == false) {
+        //handle if save failed
+        print("failed");
+      }
       // await appBloc.storage.write(key: 'jwt', value: jwt);
       final AuthLink _authLink = AuthLink(
         getToken: () => 'Bearer $jwt',
@@ -77,10 +86,10 @@ class UserBloc with ChangeNotifier {
       if (savedJwt != null) {
         setJwt(savedJwt);
       }
-      var status = await preferences.setString('jwt', jwt);
-      if (status == false) {
-        //handle if save failed
-      }
+      // var status = await preferences.setString('jwt', jwt);
+      // if (status == false) {
+      //   //handle if save failed
+      // }
       hasInit = true;
       notifyListeners();
       print("aa");
@@ -101,7 +110,7 @@ class UserBloc with ChangeNotifier {
     try {
       user = null;
       await setJwt(null);
-      preferences.remove("jwt");
+
       // await appBloc.storage.deleteAll();
       // await appBloc.storage.write(key: "welcomed", value: "true");
 
