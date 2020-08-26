@@ -123,6 +123,7 @@ class _LoginPageState extends State<LoginPage> {
                                         bottom: BorderSide(
                                             color: Colors.grey[100]))),
                                 child: TextField(
+                                  keyboardType: TextInputType.emailAddress,
                                   controller: _emailController,
                                   decoration: InputDecoration(
                                       border: InputBorder.none,
@@ -134,6 +135,8 @@ class _LoginPageState extends State<LoginPage> {
                               Container(
                                 padding: EdgeInsets.all(8.0),
                                 child: TextField(
+                                  keyboardType: TextInputType.visiblePassword,
+                                  obscureText: true,
                                   controller: _passwordController,
                                   decoration: InputDecoration(
                                       border: InputBorder.none,
