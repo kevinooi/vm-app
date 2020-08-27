@@ -12,7 +12,11 @@ class NavigationService {
     return navigatorKey.currentState.pushNamed(routeName, arguments: arguments);
   }
 
-  Future<dynamic> maybePop() {
-    return navigatorKey.currentState.maybePop();
+  // Future<dynamic> navigateToAndRemoveUntil(Route<Object> routeName, {Route<dynamic> route}) {
+  //   return navigatorKey.currentState.pushAndRemoveUntil(routeName, (route) => false);
+  // }
+
+  maybePop() {
+    navigatorKey.currentState.pop();
   }
 }

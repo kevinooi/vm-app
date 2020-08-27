@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:merchant_app/app_bloc/order_services.dart';
 import 'package:merchant_app/app_bloc/user_bloc.dart';
 import 'package:merchant_app/main.dart';
 import 'package:merchant_app/navigation_service.dart';
@@ -16,10 +17,10 @@ class PushNotifications {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   // static UserBloc userBloc;
   UserBloc get userBloc => GetIt.I<UserBloc>();
-
   NavigationService get navigator => GetIt.I<NavigationService>();
-
+  OrderServices get orderService => GetIt.I<OrderServices>();
   bool _initialized = false;
+  bool hasInit = false;
 
   Future<void> init(BuildContext context) async {
     if (!_initialized) {
@@ -57,8 +58,9 @@ class PushNotifications {
                       // ToDo
                       // refresh order || get this order
                       // orderService.getAllOrders()
+                      orderService.getAllOrders();
+                      // navigator.maybePop();
                       Navigator.pop(context);
-
                       navigator.navigateTo(Routes.home);
                     },
                   ),

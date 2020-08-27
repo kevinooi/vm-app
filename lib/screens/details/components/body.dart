@@ -3,8 +3,8 @@ import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:merchant_app/app_bloc/order_services.dart';
-import 'package:merchant_app/models/graphQLConf.dart';
 import 'package:merchant_app/models/order.dart';
+import 'package:merchant_app/navigation_service.dart';
 
 import 'custom_list_order.dart';
 import 'item.dart';
@@ -19,8 +19,9 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  GraphQLConfiguration graphQLConfiguration = GraphQLConfiguration();
+  // GraphQLConfiguration graphQLConfiguration = GraphQLConfiguration();
   OrderServices get service => GetIt.I<OrderServices>();
+  NavigationService get navigator => GetIt.I<NavigationService>();
   Order futureOrder;
 
   @override
@@ -70,14 +71,14 @@ class _BodyState extends State<Body> {
               new FlatButton(
                 onPressed: () async {
                   futureOrder = await service.rejectOrder(widget.id);
-                  Navigator.of(context).pop();
+                  navigator.maybePop();
                   showToastRejected();
                 },
                 child: new Text('Yes'),
               ),
               new FlatButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    navigator.maybePop();
                   },
                   child: new Text('No'))
             ],

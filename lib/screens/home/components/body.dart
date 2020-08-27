@@ -3,9 +3,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:merchant_app/app_bloc/order_bloc.dart';
 import 'package:merchant_app/app_bloc/order_services.dart';
-import 'package:merchant_app/models/graphQLConf.dart';
+import 'package:merchant_app/main.dart';
 import 'package:merchant_app/models/order.dart';
-import 'package:merchant_app/screens/details/details_screen.dart';
+import 'package:merchant_app/navigation_service.dart';
 import 'package:provider/provider.dart';
 
 import 'order_card.dart';
@@ -20,8 +20,9 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  GraphQLConfiguration graphQLConfiguration = GraphQLConfiguration();
+  // GraphQLConfiguration graphQLConfiguration = GraphQLConfiguration();
   OrderServices get service => GetIt.I<OrderServices>();
+  NavigationService get navigator => GetIt.I<NavigationService>();
   bool isLoading = false;
   List<Order> _list;
   int listCount = 0;
@@ -128,12 +129,7 @@ class _BodyState extends State<Body> {
                                               .addPostFrameCallback(
                                             (_) {
                                               orderBloc.id = _list[index].id;
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        DetailsScreen()),
-                                              );
+                                              navigator.navigateTo(Routes.detailScreen);
                                             },
                                           );
                                         },

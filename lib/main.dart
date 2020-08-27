@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:merchant_app/app_bloc/order_bloc.dart';
+import 'package:merchant_app/navigation_service.dart';
+import 'package:merchant_app/push_notifications.dart';
+import 'package:merchant_app/screens/details/details_screen.dart';
 import 'package:merchant_app/screens/home/home_screen.dart';
-import 'package:merchant_app/screens/login_page.dart';
+import 'package:merchant_app/screens/login_screen.dart';
 import 'package:merchant_app/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +23,8 @@ void setupLocator() {
   GetIt.I.registerLazySingleton(() => AuthServices());
   GetIt.I.registerLazySingleton(() => AuthBloc(UserBloc()));
   GetIt.I.registerLazySingleton(() => UserBloc());
+  GetIt.I.registerLazySingleton(() => NavigationService());
+  GetIt.I.registerLazySingleton(() => PushNotifications());
 }
 
 Map<String, PageRoute<dynamic> Function(Object)> routes = {
@@ -32,9 +37,11 @@ Map<String, PageRoute<dynamic> Function(Object)> routes = {
         builder: (context) => HomeScreen(),
       ),
   Routes.logout: (Object params) => MaterialPageRoute(
-        settings: RouteSettings(name: Routes.logout),
-        builder: (context) => HomeScreen(),
-      ),
+      settings: RouteSettings(name: Routes.logout),
+      builder: (context) => LoginPage()),
+  Routes.detailScreen: (Object params) => MaterialPageRoute(
+      settings: RouteSettings(name: Routes.detailScreen),
+      builder: (context) => DetailsScreen()),
 };
 
 class Routes {
@@ -43,7 +50,11 @@ class Routes {
   static const root = '/';
   static const home = '/home';
   static const logout = '/logout';
+  static const detailScreen = '/detailScreen';
 }
+
+NavigationService get navigator => GetIt.I<NavigationService>();
+PushNotifications get notification => GetIt.I<PushNotifications>();
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,7 +62,17 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<UserBloc>(
@@ -71,6 +92,22 @@ class MyApp extends StatelessWidget {
               client: graphQLConfiguration.client,
               child: CacheProvider(
                 child: MaterialApp(
+                  builder: (context, child) {
+                    return Navigator(
+                      onGenerateRoute: (settings) =>
+                          MaterialPageRoute(builder: (context) {
+                        if (!notification.hasInit) {
+                          notification.init(context);
+                        }
+
+                        return MediaQuery(
+                          data: MediaQuery.of(context)
+                              .copyWith(textScaleFactor: 1.0),
+                          child: child,
+                        );
+                      }),
+                    );
+                  },
                   title: 'Merchant App',
                   theme: ThemeData(
                     scaffoldBackgroundColor: Color.fromRGBO(143, 148, 251, 1),
@@ -78,7 +115,7 @@ class MyApp extends StatelessWidget {
                         color: Color.fromRGBO(143, 148, 251, 1), elevation: 0),
                     visualDensity: VisualDensity.adaptivePlatformDensity,
                   ),
-                  // navigatorKey: GETIT.navigatorKey,
+                  navigatorKey: navigator.navigatorKey,
                   initialRoute: Routes.root,
                   onGenerateRoute: (settings) {
                     return routes[settings.name](settings.arguments);

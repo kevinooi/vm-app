@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "923370902684",
+    "firebase_url": "https://vm-app-1495f.firebaseio.com",
+    "project_id": "vm-app-1495f",
+    "storage_bucket": "vm-app-1495f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:923370902684:android:060be05deb54dbcca68959",
+        "android_client_info": {
+          "package_name": "com.example.merchant_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "923370902684-6cvbihh12477r2osk3etfe91jjibk5f0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMyDzeKecBPTZemcX8mC2Yv-QbSE9fmfg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "923370902684-6cvbihh12477r2osk3etfe91jjibk5f0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

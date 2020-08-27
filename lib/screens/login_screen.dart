@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:merchant_app/app_bloc/auth_service.dart';
 import 'package:merchant_app/app_bloc/user_bloc.dart';
-import 'package:merchant_app/models/graphQLConf.dart';
 import 'package:merchant_app/screens/home/home_screen.dart';
 
 import '../FadeAnimation.dart';
@@ -19,7 +18,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  GraphQLConfiguration graphQLConfiguration = GraphQLConfiguration();
   AuthServices get service => GetIt.I<AuthServices>();
 
   @override

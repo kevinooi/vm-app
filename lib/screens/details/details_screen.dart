@@ -25,11 +25,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
         appBar: AppBar(
           centerTitle: true,
           title: Text("Order Details"),
-          // leading: IconButton(
-          //     icon: Icon(Icons.arrow_back),
-          //     onPressed: () {
-          //       Navigator.of(context).pop();
-          //     }),
         ),
         body: Body(context.watch<OrderBloc>().id?? null),
     );
