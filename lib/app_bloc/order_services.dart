@@ -18,7 +18,7 @@ class OrderServices extends ChangeNotifier {
       // final orderlist = await futureOrderList;
       QueryResult result = await client.query(QueryOptions(
         documentNode: gql(GraphQLQuery.getAllOrders),
-        variables: {"sort": "created_at:desc", "limit": 5, "start": start},
+        variables: {"sort": "created_at:desc", "limit": 6, "start": start},
         fetchPolicy: FetchPolicy.noCache,
       ));
 

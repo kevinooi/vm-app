@@ -41,7 +41,7 @@ Map<String, PageRoute<dynamic> Function(Object)> routes = {
       builder: (context) => LoginPage()),
   Routes.detailScreen: (Object params) => MaterialPageRoute(
       settings: RouteSettings(name: Routes.detailScreen),
-      builder: (context) => DetailsScreen()),
+      builder: (context) => DetailsScreen(),)
 };
 
 class Routes {
@@ -86,6 +86,9 @@ class _MyAppState extends State<MyApp> {
               ),
               ChangeNotifierProvider<OrderBloc>(
                 create: (context) => OrderBloc(),
+              ),
+              ChangeNotifierProvider<PushNotifications>(
+                create: (context) => PushNotifications(),
               )
             ],
             child: GraphQLProvider(

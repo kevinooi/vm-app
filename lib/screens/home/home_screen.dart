@@ -3,7 +3,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:merchant_app/app_bloc/user_bloc.dart';
 import 'package:merchant_app/navigation_service.dart';
-import 'package:merchant_app/push_notifications.dart';
 import 'package:merchant_app/screens/login_screen.dart';
 // import 'package:provider/provider.dart';
 
@@ -17,7 +16,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   UserBloc get service => GetIt.I<UserBloc>();
   NavigationService get navigator => GetIt.I<NavigationService>();
-  PushNotifications get notification => GetIt.I<PushNotifications>();
 
   void _showDialog() {
     showDialog(
@@ -39,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               new FlatButton(
                   onPressed: () {
-                    navigator.maybePop();
+                    Navigator.pop(context);
                   },
                   child: new Text('No'))
             ],
@@ -50,11 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     // print(context.select<AuthBloc, bool>((value) => value.userBloc.loggedIn));
-    return
-        // WillPopScope(
-        //   onWillPop: () => Future.value(false),
-        //   child:
-        Scaffold(
+    return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text('Orders', style: TextStyle(color: Colors.white)),

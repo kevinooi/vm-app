@@ -38,6 +38,10 @@ class UserBloc with ChangeNotifier {
 
   // ToDo: send to device
   String fcmToken;
+  // PushNotification service
+  bool hasNotifications = false;
+  String notificationRoute;
+  String notificationArguments;
 
   String _jwt;
   String get jwt => _jwt;

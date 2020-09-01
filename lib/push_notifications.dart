@@ -8,19 +8,32 @@ import 'package:merchant_app/app_bloc/user_bloc.dart';
 import 'package:merchant_app/main.dart';
 import 'package:merchant_app/navigation_service.dart';
 
-// ToDo: GETIT
-class PushNotifications {
+import 'app_bloc/order_bloc.dart';
+import 'models/order.dart';
+
+class PushNotifications with ChangeNotifier {
   // PushNotifications._();
 
   // factory PushNotifications() => _instance;
   // static final PushNotifications _instance = PushNotifications._();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  // static UserBloc userBloc;
-  UserBloc get userBloc => GetIt.I<UserBloc>();
   NavigationService get navigator => GetIt.I<NavigationService>();
+  UserBloc get userBloc => GetIt.I<UserBloc>();
+  OrderBloc orderBloc;
   OrderServices get orderService => GetIt.I<OrderServices>();
   bool _initialized = false;
   bool hasInit = false;
+
+  Future<Order> futureOrder;
+  String _id;
+  String get id => _id;
+  set id(String id) {
+    _id = id;
+    futureOrder = orderService.getOrder(id);
+    notifyListeners();
+  }
+
+  String notifyId;
 
   Future<void> init(BuildContext context) async {
     if (!_initialized) {
@@ -59,9 +72,23 @@ class PushNotifications {
                       // refresh order || get this order
                       // orderService.getAllOrders()
                       orderService.getAllOrders();
-                      // navigator.maybePop();
                       Navigator.pop(context);
-                      navigator.navigateTo(Routes.home);
+                      if (message.containsKey('data') &&
+                          message['data'].containsKey('view') &&
+                          message['data'].containsKey('order_id')) {
+                        final dynamic view = message['data']['view'];
+                        final dynamic orderId = message['data']['order_id'];
+
+                        if (view != null) {
+                          // Navigate to the new order view
+                          if (view == 'new_order') {
+                            id = orderId;
+                            notifyId = id;
+                            navigator.navigateTo(Routes.detailScreen);
+                          }
+                        }
+                      }
+                      // navigator.navigateTo(Routes.home);
                     },
                   ),
                 ],
@@ -75,36 +102,53 @@ class PushNotifications {
             );
           }
         },
-        // on received push notitications while app is in background
+        // ToDo: fix navigation when tapping on notification
+        // on received push notitications while app is killed
         onBackgroundMessage: backgroundMessageHandler,
         onLaunch: (Map<String, dynamic> message) async {
           try {
-            if (message.containsKey('type')) {
-              final dynamic data = message['type'];
-              if (data == "new_deal") {
+            if (message.containsKey('view') &&
+                message.containsKey('order_id')) {
+              final dynamic view = message['view'];
+              final dynamic orderId = message['order_id'];
+              if (view == "new_order") {
                 developer.log(
                   "FCM",
-                  name: "PushNotification.onResume",
-                  error: data,
+                  name: "PushNotification.onLaunch",
+                  error: view,
                 );
 
-                // userBloc.hasNotifications = true;
-                // userBloc.notificationRoute = Routes.tab;
-                // userBloc.notificationArguments = "deals";
+                if (view != null) {
+                  // Navigate to the new order view
+                  if (view == 'new_order') {
+                    id = orderId;
+                    notifyId = id;
+                    navigator.navigateTo(Routes.detailScreen);
+                  }
+                }
               }
             } else if (message.containsKey('data') &&
-                message['data'].containsKey('type')) {
-              final dynamic data = message['data']['type'];
-              if (data == "new_deal") {
+                message['data'].containsKey('view') &&
+                message['data'].containsKey('order_id')) {
+              // navigator.navigateTo(Routes.detailScreen);
+              // navigator.navigateToRoute(MaterialPageRoute(builder: (context) => DetailsScreen()));
+              final dynamic view = message['data']['view'];
+              final dynamic orderId = message['data']['order_id'];
+              if (view == "new_order") {
                 developer.log(
                   "FCM",
-                  name: "PushNotification.onResume",
-                  error: data,
+                  name: "PushNotification.onLaunch",
+                  error: view,
                 );
 
-                // userBloc.hasNotifications = true;
-                // userBloc.notificationRoute = Routes.tab;
-                // userBloc.notificationArguments = "deals";
+                if (view != null) {
+                  // Navigate to the new order view
+                  if (view == 'new_order') {
+                    id = orderId;
+                    notifyId = id;
+                    navigator.navigateTo(Routes.detailScreen);
+                  }
+                }
               }
             }
           } catch (error) {
@@ -117,17 +161,18 @@ class PushNotifications {
             error: message,
           );
         },
+        // on received push notitications while app is in background
         onResume: (Map<String, dynamic> message) async {
           try {
-            if (message.containsKey('type')) {
-              final dynamic data = message['type'];
-              if (data == "new_deal") {
+            if (message.containsKey('view')) {
+              final dynamic view = message['view'];
+              // final dynamic orderId = message['order_id'];
+              if (view == "new_order") {
                 developer.log(
                   "FCM",
                   name: "PushNotification.onResume",
-                  error: data,
+                  error: view,
                 );
-
                 // Future.microtask(
                 //   () => userBloc.navigationService.navigateToRoute(
                 //     MaterialPageRoute(
@@ -137,14 +182,35 @@ class PushNotifications {
                 // );
               }
             } else if (message.containsKey('data') &&
-                message['data'].containsKey('type')) {
-              final dynamic data = message['data']['type'];
-              if (data == "new_deal") {
+                message['data'].containsKey('view') &&
+                message['data'].containsKey('order_id')) {
+              final dynamic view = message['data']['view'];
+              final String orderId = message['data']['order_id'];
+              if (view == "new_order") {
                 developer.log(
                   "FCM",
                   name: "PushNotification.onResume",
-                  error: data,
+                  error: view,
                 );
+                // userBloc.hasNotifications = true;
+                // userBloc.notificationRoute = Routes.detailScreen;
+                if (view != null) {
+                  // Navigate to the new order view
+                  if (view == 'new_order') {
+                    id = orderId;
+                    notifyId = id;
+                    navigator.navigateTo(Routes.detailScreen);
+                  }
+                }
+                // if (userBloc.hasNotifications) {
+                //   String route;
+                //   route = userBloc.notificationRoute ?? Routes.home;
+                //   Future.delayed(Duration.zero, () {
+                //     orderBloc.id = userBloc.notificationArguments;
+                //     // Navigator.pushNamedAndRemoveUntil(context, route, (route) => false);
+                //     navigator.navigateTo(Routes.detailScreen);
+                //   });
+                // }
 
                 // Future.microtask(
                 //   () => userBloc.navigationService.navigateTo(
@@ -180,32 +246,35 @@ class PushNotifications {
   static Future<dynamic> backgroundMessageHandler(
       Map<String, dynamic> message) async {
     try {
-      if (message.containsKey('type')) {
-        final dynamic data = message['type'];
-        if (data == "new_deal") {
+      if (message.containsKey('view')) {
+        final dynamic view = message['view'];
+        // final dynamic orderId = message['order_id'];
+        if (view == "detail_screen") {
           developer.log(
             "FCM",
             name: "PushNotification.backgroundMessageHandler",
-            error: data,
+            error: view,
           );
-
-          // userBloc.hasNotifications = true;
-          // userBloc.notificationRoute = Routes.tab;
-          // userBloc.notificationArguments = "deals";
         }
       } else if (message.containsKey('data') &&
-          message['data'].containsKey('type')) {
-        final dynamic data = message['data']['type'];
-        if (data == "new_deal") {
+          message['data'].containsKey('view') &&
+          message['data'].containsKey('order_id')) {
+        final dynamic view = message['data']['view'];
+        // final dynamic orderId = message['data']['order_id'];
+        if (view == "new_order") {
           developer.log(
             "FCM",
             name: "PushNotification.backgroundMessageHandler",
-            error: data,
+            error: view,
           );
 
-          // userBloc.hasNotifications = true;
-          // userBloc.notificationRoute = Routes.tab;
-          // userBloc.notificationArguments = "deals";
+          // if (view != null) {
+          //   if (view == 'new_order') {
+          //     id = orderId;
+          //     notifyId = id;
+          // navigator.navigateTo(Routes.detailScreen);
+          //   }
+          // }
         }
       }
     } catch (error) {
@@ -218,4 +287,20 @@ class PushNotifications {
       error: message,
     );
   }
+
+  //  void _serialiseAndNavigate(Map<String, dynamic> message) {
+  //   var notificationData = message['data'];
+  //   var view = notificationData['view'];
+
+  //   if (view != null) {
+  //     // Navigate to the create post view
+  //     if (view == 'detail_screen') {
+  //       navigator.navigateTo(Routes.detailScreen);
+  //     }
+  //     if (view == 'home_screen') {
+  //       navigator.navigateTo(Routes.home);
+  //     }
+  //     // If there's no view it'll just open the app on the first view
+  //   }
+  // }
 }

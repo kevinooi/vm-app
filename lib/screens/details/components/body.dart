@@ -11,7 +11,6 @@ import 'item.dart';
 
 class Body extends StatefulWidget {
   final String id;
-
   Body(this.id);
 
   @override
@@ -71,14 +70,14 @@ class _BodyState extends State<Body> {
               new FlatButton(
                 onPressed: () async {
                   futureOrder = await service.rejectOrder(widget.id);
-                  navigator.maybePop();
+                  Navigator.pop(context);
                   showToastRejected();
                 },
                 child: new Text('Yes'),
               ),
               new FlatButton(
                   onPressed: () {
-                    navigator.maybePop();
+                    Navigator.pop(context);
                   },
                   child: new Text('No'))
             ],
